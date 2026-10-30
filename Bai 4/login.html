@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Đăng nhập</title>
+    <style>
+        * { box-sizing: border-box; }
+        body { margin: 56px auto; padding: 0 18px; max-width: 650px; color: #173f73; font: 15px/1.5 Arial, sans-serif; background: #f5f7fb; }
+        fieldset { max-width: 430px; padding: 18px 22px; border: 2px solid #26814a; border-radius: 9px; background: #eaf8f1; }
+        legend { padding: 0 8px; color: #b42318; font-size: 18px; }
+        .brand { display: block; width: 94px; height: auto; margin: 0 auto 12px; }
+        hr { border: 0; border-top: 1px solid #c3d8ca; }
+        table { width: 100%; border-spacing: 0 10px; }
+        td:first-child { width: 36%; }
+        input[type=text], input[type=password] { width: 100%; padding: 8px 9px; border: 1px solid #aab8c7; border-radius: 4px; font: inherit; }
+        input[type=button] { float: right; padding: 7px 14px; border: 0; border-radius: 4px; color: #fff; background: #173f73; font: inherit; cursor: pointer; }
+        input[type=button]:hover { background: #245b98; }
+        #nt { display: none; max-width: 430px; margin-top: 14px; padding: 12px 15px; border: 1px solid #d5dce5; border-radius: 5px; background: #fff; box-shadow: 2px 2px 5px rgb(15 23 42 / 10%); }
+        .notice-success { color: #176b3a; }
+        .notice-error { color: #b42318; }
+        #nt a { color: #175a9b; }
+        @media (max-width: 480px) { body { margin-top: 24px; } fieldset { padding: 14px; } td:first-child { width: 34%; } }
+    </style>
+</head>
+<body>
+    <form id="loginForm">
+        <fieldset>
+            <legend><strong>ĐĂNG NHẬP</strong></legend>
+            <img class="brand" src="images/dhdn.gif" alt="Logo">
+            <hr>
+            <table>
+                <tr>
+                    <td><label for="us">Tên đăng nhập</label></td>
+                    <td><input type="text" id="us" name="user" autocomplete="username" required></td>
+                </tr>
+                <tr>
+                    <td><label for="pw">Mật khẩu</label></td>
+                    <td><input type="password" id="pw" name="pass" autocomplete="current-password" required></td>
+                </tr>
+                <tr>
+                    <td colspan="2"><input id="sm" type="submit" value="Đăng nhập"></td>
+                </tr>
+            </table>
+        </fieldset>
+    </form>
+    <div id="nt" role="status" aria-live="polite"></div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+            var form = event.currentTarget;
+            var notice = document.getElementById('nt');
+            var button = document.getElementById('sm');
+            var xhr = new XMLHttpRequest();
+            button.disabled = true;
+            button.value = 'Đang kiểm tra...';
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState === XMLHttpRequest.DONE) {
+                    notice.style.display = 'block';
+                    notice.innerHTML = xhr.responseText || '<span class="notice-error">Không thể kết nối máy chủ.</span>';
+                    button.disabled = false;
+                    button.value = 'Đăng nhập';
+                }
+            };
+            xhr.open('POST', 'check.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+            xhr.send('user=' + encodeURIComponent(form.user.value) + '&pass=' + encodeURIComponent(form.pass.value));
+        });
+    </script>
+</body>
+</html>
